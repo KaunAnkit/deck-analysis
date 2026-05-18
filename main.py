@@ -13,7 +13,7 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message": "Backend running"}
+    return {"message":  "running"}
 
 @app.post("/upload")
 async def upload_pitch_deck(file: UploadFile = File(...)):

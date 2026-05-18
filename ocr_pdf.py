@@ -3,22 +3,22 @@ import os
 
 reader = easyocr.Reader(['en'])
 
-slides_folder = "slides"
+folder = "slides"
 
 all_slides_text = []
 
-for filename in os.listdir(slides_folder):
+for x in os.listdir(folder):
 
-    path = os.path.join(slides_folder, filename)
+    path = os.path.join(folder, x)
 
     result = reader.readtext(path)
 
     texts = []
 
-    for detection in result:
+    for x in result:
 
-        text = detection[1]
-        confidence = detection[2]
+        text = x[1]
+        confidence = x[2]
 
         if confidence > 0.3:
             texts.append(text)
@@ -26,7 +26,7 @@ for filename in os.listdir(slides_folder):
     slide_text = "\n".join(texts)
 
     all_slides_text.append({
-        "slide": filename,
+        "slide": x,
         "text": slide_text
     })
 

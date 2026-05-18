@@ -7,17 +7,17 @@ def pdf_to_images(pdf_path, output_folder="slides"):
 
     doc = fitz.open(pdf_path)
 
-    for page_num in range(len(doc)):
+    for x in range(len(doc)):
 
-        page = doc.load_page(page_num)
+        page = doc.load_page(x)
 
         pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
 
-        image_path = f"{output_folder}/page_{page_num + 1}.png"
+        path = f"{output_folder}/page_{x + 1}.png"
 
-        pix.save(image_path)
+        pix.save(path)
 
-        print("Saved:", image_path)
+        print("Saved:", path)
 
 
 pdf_to_images("fusion_pitch.pdf") 
