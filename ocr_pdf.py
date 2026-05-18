@@ -15,10 +15,10 @@ for x in os.listdir(folder):
 
     texts = []
 
-    for x in result:
+    for y in result:
 
-        text = x[1]
-        confidence = x[2]
+        text = y[1]
+        confidence = y[2]
 
         if confidence > 0.3:
             texts.append(text)
