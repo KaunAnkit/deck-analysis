@@ -108,10 +108,3 @@ def analyze_slide(slide_text,image_path):
             "raw_response": response_text
         }
     
-
-result = analyze_slide(
-    "The Future of Publishing",
-    "slides/page_1.png"
-)
-
-print(result)
