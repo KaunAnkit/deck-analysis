@@ -3,3 +3,5 @@ slides/
 __pycache__
 
 fusion_pitch.pdf
+
+.env

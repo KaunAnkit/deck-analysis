@@ -1,33 +1,39 @@
 import easyocr
 import os
 
-reader = easyocr.Reader(['en'])
+def ocr_slides():
 
-folder = "slides"
+    reader = easyocr.Reader(['en'])
 
-all_slides_text = []
+    folder = "slides"
 
-for x in os.listdir(folder):
+    all_slides_text = []
 
-    path = os.path.join(folder, x)
+    for x in sorted(os.listdir(folder)):
 
-    result = reader.readtext(path)
+        if not x.endswith('.png'):
 
-    texts = []
+            continue
 
-    for y in result:
+        path = os.path.join(folder, x)
 
-        text = y[1]
-        confidence = y[2]
+        result = reader.readtext(path)
 
-        if confidence > 0.3:
-            texts.append(text)
+        texts = []
 
-    slide_text = "\n".join(texts)
+        for y in result:
 
-    all_slides_text.append({
-        "slide": x,
-        "text": slide_text
-    })
+            text = y[1]
+            confidence = y[2]
 
-print(all_slides_text)
+            if confidence > 0.3:
+                texts.append(text)
+
+        slide_text = "\n".join(texts)
+
+        all_slides_text.append({
+            "slide": x,
+            "text": slide_text
+        })
+    
+    return all_slides_text
