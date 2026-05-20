@@ -2,7 +2,7 @@ import json
 
 from pdf_to_image import pdf_to_images
 from ocr_pdf import ocr_slides
-from llm_client import analyze_slide
+from llm_client import analyze_slide, analyse_slide2
 from deck_judge import judge_deck
 
 
@@ -28,16 +28,15 @@ def run_pipeline():
 
         print(f"\nAnalyzing {slide['slide']}")
 
-        analysis = analyze_slide(
-            slide["text"],
-            image_path
-        )
+        llama_analysis = analyze_slide(slide["text"], image_path)
+        gemini_analysis = analyse_slide2(slide["text"], image_path)
 
         all_analysis.append({
             "slide": slide["slide"],
             "image_path": image_path,
             "ocr_text": slide["text"],
-            "analysis": analysis
+            "llama_analysis": llama_analysis,
+            "gemini_analysis": gemini_analysis
         })
 
     with open(
@@ -57,7 +56,11 @@ def run_pipeline():
 
 
     compressed_analysis = [
-        slide["analysis"]
+        {
+            "slide": slide["slide"],
+            "llama": slide["llama_analysis"],
+            "gemini": slide["gemini_analysis"]
+        }
         for slide in all_analysis
     ]
 
