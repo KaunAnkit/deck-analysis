@@ -2,8 +2,16 @@ import json
 
 from pdf_to_image import pdf_to_images
 from ocr_pdf import ocr_slides
-from llm_client import analyze_slide, analyse_slide2
+
+from image_analysis import describe_slide
+
+from agents.llm_client import analyze_slide
+from agents.llm_client2 import analyze_slide_c
+from agents.llm_client3 import analyze_slide_d
+
 from deck_judge import judge_deck
+
+from concurrent.futures import ThreadPoolExecutor
 
 
 PDF_PATH = "fusion_pitch.pdf"
@@ -19,8 +27,9 @@ def run_pipeline():
 
     print(f"\nFound {len(slides)} slides")
 
-
-    all_analysis = []
+    analysis_a = []
+    analysis_c = []
+    analysis_d = []
 
     for slide in slides:
 
@@ -28,44 +37,97 @@ def run_pipeline():
 
         print(f"\nAnalyzing {slide['slide']}")
 
-        llama_analysis = analyze_slide(slide["text"], image_path)
-        gemini_analysis = analyse_slide2(slide["text"], image_path)
+        visual_details = describe_slide(
+            image_path,
+            slide["text"]
+        )
 
-        all_analysis.append({
+        with ThreadPoolExecutor(max_workers=3) as executor:
+
+            future_a = executor.submit(
+                analyze_slide,
+                slide["text"],
+                image_path
+            )
+
+            future_c = executor.submit(
+                analyze_slide_c,
+                slide["text"],
+                visual_details
+            )
+
+            future_d = executor.submit(
+                analyze_slide_d,
+                slide["text"],
+                visual_details
+            )
+
+            result_a = future_a.result()
+            result_c = future_c.result()
+            result_d = future_d.result()
+
+        analysis_a.append({
             "slide": slide["slide"],
-            "image_path": image_path,
-            "ocr_text": slide["text"],
-            "llama_analysis": llama_analysis,
-            "gemini_analysis": gemini_analysis
+            "analysis": result_a
+        })
+
+        analysis_c.append({
+            "slide": slide["slide"],
+            "analysis": result_c
+        })
+
+        analysis_d.append({
+            "slide": slide["slide"],
+            "analysis": result_d
         })
 
     with open(
-        "analysis.json",
+        "analysis_a.json",
         "w",
         encoding="utf-8"
     ) as f:
 
         json.dump(
-            all_analysis,
+            analysis_a,
             f,
             indent=4,
             ensure_ascii=False
         )
 
-    print("\nSaved analysis.json agents work done")
+    with open(
+        "analysis_c.json",
+        "w",
+        encoding="utf-8"
+    ) as f:
 
+        json.dump(
+            analysis_c,
+            f,
+            indent=4,
+            ensure_ascii=False
+        )
 
-    compressed_analysis = [
-        {
-            "slide": slide["slide"],
-            "llama": slide["llama_analysis"],
-            "gemini": slide["gemini_analysis"]
-        }
-        for slide in all_analysis
-    ]
+    with open(
+        "analysis_d.json",
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            analysis_d,
+            f,
+            indent=4,
+            ensure_ascii=False
+        )
+
+    print("\nSaved analysis_a.json")
+    print("Saved analysis_c.json")
+    print("Saved analysis_d.json")
 
     deck_report = judge_deck(
-        compressed_analysis
+        analysis_a,
+        analysis_c,
+        analysis_d
     )
 
     with open(
@@ -91,6 +153,7 @@ if __name__ == "__main__":
     result = run_pipeline()
 
     print("\nFINAL REPORT\n")
+
     print(
         json.dumps(
             result,

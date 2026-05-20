@@ -10,7 +10,7 @@ client = Groq(
 )
 
 
-def judge_deck(slide_analysis):
+def judge_deck(analysis_a,analysis_c,analysis_d):
 
     prompt = f"""
 You are an experienced startup investor.
@@ -44,6 +44,12 @@ JSON FORMAT:
         "competitive_positioning": ""
     }},
 
+    "reviewer_consensus": {{
+        "agreement_level": "",
+        "major_agreements": [],
+        "major_disagreements": []
+    }},
+
     "top_strengths": [],
     "top_weaknesses": [],
 
@@ -75,8 +81,17 @@ Guidelines:
   - High
 
 Slide Analysis:
+Agent A Analysis:
 
-{json.dumps(slide_analysis, indent=2)}
+{json.dumps(analysis_a, indent=2)}
+
+Agent C Analysis:
+
+{json.dumps(analysis_c, indent=2)}
+
+Agent D Analysis:
+
+{json.dumps(analysis_d, indent=2)}
 """
 
     response = client.chat.completions.create(
