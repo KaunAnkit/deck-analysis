@@ -7,7 +7,7 @@ import base64
 load_dotenv()
 
 client = Groq(
-    api_key=os.getenv("GROQ_IMAGE_KEY")
+    api_key=os.getenv("GROQ_BACKUP")
 )
 
 

@@ -32,7 +32,8 @@ def analyze_slide_d(slide_text, visual_details):
         "summary": "",
         "strengths": [],
         "weaknesses": [],
-        "investor_concerns": []
+        "investor_concerns": [],
+        "Overall Score (0-100)": 0, 
     }}
 
     OCR Text:

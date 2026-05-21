@@ -6,7 +6,7 @@ import json
 load_dotenv()
 
 client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
+    api_key=os.getenv("GROQ_BACKUP")
 )
 
 
@@ -51,7 +51,8 @@ def analyze_slide(slide_text,image_path):
         "summary": "",
         "strengths": [],
         "weaknesses": [],
-        "investor_concerns": []
+        "investor_concerns": [],
+        "Overall Score (0-100)": 0,
     }}
 
     OCR Text:

@@ -16,12 +16,29 @@ from concurrent.futures import ThreadPoolExecutor
 
 PDF_PATH = "fusion_pitch.pdf"
 
+def compress_analysis(analysis_list):
 
-def run_pipeline():
+    compressed = []
+    for x in analysis_list:
+        
+        a = x.get("analysis", {})
 
-    pdf_to_images(PDF_PATH)
+        compressed.append({
+            "slide": x["slide"],
+            "type": a.get("slide_type", ""),
+            "score": a.get("Overall Score (0-100)", 0),
+            "strengths": a.get("strengths", [])[:2],      
+            "weaknesses": a.get("weaknesses", [])[:2],     
+            "concerns": a.get("investor_concerns", [])[:2] 
+        })
+    return compressed
 
-    print("\nPDF conversion done")
+
+def run_pipeline(pdf_path):
+
+    pdf_to_images(pdf_path)
+
+    print("PDF conversion done")
 
     slides = ocr_slides()
 
@@ -34,8 +51,6 @@ def run_pipeline():
     for slide in slides:
 
         image_path = f"slides/{slide['slide']}"
-
-        print(f"\nAnalyzing {slide['slide']}")
 
         visual_details = describe_slide(
             image_path,
@@ -81,6 +96,8 @@ def run_pipeline():
             "analysis": result_d
         })
 
+    print("\nAnalyzed All the slides")
+
     with open(
         "analysis_a.json",
         "w",
@@ -124,10 +141,12 @@ def run_pipeline():
     print("Saved analysis_c.json")
     print("Saved analysis_d.json")
 
+
+
     deck_report = judge_deck(
-        analysis_a,
-        analysis_c,
-        analysis_d
+        compress_analysis(analysis_a),
+        compress_analysis(analysis_c),
+        compress_analysis(analysis_d)
     )
 
     with open(
@@ -160,3 +179,5 @@ if __name__ == "__main__":
             indent=4
         )
     )
+
+
