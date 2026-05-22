@@ -1,104 +1,243 @@
+console.log("SCRIPT LOADED");
+
 const uploadBtn = document.getElementById("uploadBtn");
 
 uploadBtn.addEventListener("click", uploadPDF);
 
 async function uploadPDF() {
-    const file = document.getElementById("pdfInput").files[0];
+
+    const file =
+        document.getElementById("pdfInput").files[0];
 
     if (!file) {
         alert("Please select a PDF");
         return;
     }
 
-    const status = document.getElementById("status");
-    status.textContent = "Analyzing pitch deck...";
+    const status =
+        document.getElementById("status");
+
+    status.textContent =
+        "Analyzing pitch deck...";
 
     try {
-        const formData = new FormData();
-        formData.append("file", file);
 
-        const response = await fetch("http://localhost:9000/upload", {
-            method: "POST",
-            body: formData
-        });
+        const formData =
+            new FormData();
 
-        const data = await response.json();
+        formData.append(
+            "file",
+            file
+        );
+
+        const response =
+            await fetch(
+                "http://localhost:9000/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                `Server error: ${response.status}`
+            );
+        }
+
+        const data =
+            await response.json();
+
+        console.log("FULL RESPONSE:");
         console.log(data);
 
-        status.textContent = "Analysis Complete";
-        renderDashboard(data.report);
+        let report =
+            data.report;
 
-    } catch (error) {
+        // If backend sends JSON string
+        if (typeof report === "string") {
+            report = JSON.parse(report);
+        }
+
+        console.log("REPORT:");
+        console.log(report);
+
+        status.textContent =
+            "Analysis Complete";
+
+        renderDashboard(report);
+
+    }
+    catch (error) {
+
         console.error(error);
-        status.textContent = "Failed to connect to backend";
+
+        document.getElementById("status")
+            .textContent =
+            "Failed to analyze PDF";
+
+        document.getElementById("output")
+            .innerHTML =
+            `
+            <div class="section">
+                <h2>Error</h2>
+                <p>${error.message}</p>
+            </div>
+            `;
     }
 }
 
 function renderDashboard(report) {
-    const output = document.getElementById("output");
+
+    console.log("Rendering dashboard...");
+    console.log(report);
+
+    const output =
+        document.getElementById("output");
+
+    const dimensionScores =
+        report.dimension_scores || {};
+
+    const strengths =
+        report.top_strengths || [];
+
+    const weaknesses =
+        report.top_weaknesses || [];
+
+    const missingSections =
+        report.missing_sections || [];
+
+    const redFlags =
+        report.red_flags || [];
+
+    const suggestions =
+        report.improvement_suggestions || {};
 
     output.innerHTML = `
+
         <div class="score-card">
             <h2>Overall Score</h2>
-            <div class="score">${report.overall_score}</div>
-            <p><strong>Investment Readiness:</strong> ${report.investment_readiness}</p>
-            <p><strong>Confidence:</strong> ${report.confidence_level}</p>
+
+            <div class="score">
+                ${report.overall_score ?? "N/A"}
+            </div>
+
+            <p>
+                <strong>
+                    Investment Readiness:
+                </strong>
+                ${report.investment_readiness ?? "N/A"}
+            </p>
+
+            <p>
+                <strong>
+                    Confidence:
+                </strong>
+                ${report.confidence_level ?? "N/A"}
+            </p>
         </div>
 
         <div class="grid">
+
             <div class="section">
+
                 <h2>Dimension Scores</h2>
-                ${Object.entries(report.dimension_scores)
+
+                ${Object.entries(dimensionScores)
                     .map(([key, value]) => `
                         <div class="metric">
-                            <span>${key}</span>
+                            <b><span>${key}</span></b>
                             <span>${value}</span>
                         </div>
                     `)
                     .join("")}
+
             </div>
 
             <div class="section">
+
                 <h2>Reviewer Consensus</h2>
-                <p><strong>Agreement:</strong> ${report.reviewer_consensus?.agreement_level || "-"}</p>
+
+                <p>
+                    <strong>Agreement:</strong>
+                    ${report.reviewer_consensus?.agreement_level || "N/A"}
+                </p>
+
             </div>
+
         </div>
 
         <div class="grid">
+
             <div class="section">
+
                 <h2>Top Strengths</h2>
+
                 <ul>
-                    ${report.top_strengths.map(item => `<li>${item}</li>`).join("")}
+                    ${strengths
+                        .map(item =>
+                            `<li>${item}</li>`
+                        )
+                        .join("")}
                 </ul>
+
             </div>
 
             <div class="section">
+
                 <h2>Top Weaknesses</h2>
+
                 <ul>
-                    ${report.top_weaknesses.map(item => `<li>${item}</li>`).join("")}
+                    ${weaknesses
+                        .map(item =>
+                            `<li>${item}</li>`
+                        )
+                        .join("")}
                 </ul>
+
             </div>
+
         </div>
 
         <div class="grid">
+
             <div class="section">
+
                 <h2>Missing Sections</h2>
+
                 <ul>
-                    ${report.missing_sections.map(item => `<li>${item}</li>`).join("")}
+                    ${missingSections
+                        .map(item =>
+                            `<li>${item}</li>`
+                        )
+                        .join("")}
                 </ul>
+
             </div>
 
             <div class="section">
+
                 <h2>Red Flags</h2>
+
                 <ul>
-                    ${report.red_flags.map(item => `<li>${item}</li>`).join("")}
+                    ${redFlags
+                        .map(item =>
+                            `<li>${item}</li>`
+                        )
+                        .join("")}
                 </ul>
+
             </div>
+
         </div>
 
         <div class="section full-width">
-            <h2>Improvement Suggestions</h2>
-            ${Object.entries(report.improvement_suggestions)
+
+            <h2>
+                Improvement Suggestions
+            </h2>
+
+            ${Object.entries(suggestions)
                 .map(([key, value]) => `
                     <div class="suggestion">
                         <h3>${key}</h3>
@@ -106,11 +245,20 @@ function renderDashboard(report) {
                     </div>
                 `)
                 .join("")}
+
         </div>
 
         <div class="section full-width">
-            <h2>Overall Recommendation</h2>
-            <p class="recommendation">${report.overall_recommendation}</p>
+
+            <h2>
+                Overall Recommendation
+            </h2>
+
+            <p class="recommendation">
+                ${report.overall_recommendation || "N/A"}
+            </p>
+
         </div>
+
     `;
 }

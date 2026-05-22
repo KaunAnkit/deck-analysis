@@ -1,5 +1,7 @@
 import json
 
+
+
 from pdf_to_image import pdf_to_images
 from ocr_pdf import ocr_slides
 
@@ -13,8 +15,12 @@ from deck_judge import judge_deck
 
 from concurrent.futures import ThreadPoolExecutor
 
+import os
 
-PDF_PATH = "fusion_pitch.pdf"
+REPORT_DIR = "reports"
+os.makedirs(REPORT_DIR, exist_ok=True)
+
+
 
 def compress_analysis(analysis_list):
 
@@ -99,7 +105,7 @@ def run_pipeline(pdf_path):
     print("\nAnalyzed All the slides")
 
     with open(
-        "analysis_a.json",
+        f"{REPORT_DIR}/analysis_a.json",
         "w",
         encoding="utf-8"
     ) as f:
@@ -112,7 +118,7 @@ def run_pipeline(pdf_path):
         )
 
     with open(
-        "analysis_c.json",
+        f"{REPORT_DIR}/analysis_c.json",
         "w",
         encoding="utf-8"
     ) as f:
@@ -125,7 +131,7 @@ def run_pipeline(pdf_path):
         )
 
     with open(
-        "analysis_d.json",
+        f"{REPORT_DIR}/analysis_d.json",
         "w",
         encoding="utf-8"
     ) as f:
@@ -150,7 +156,7 @@ def run_pipeline(pdf_path):
     )
 
     with open(
-        "deck_report.json",
+        f"{REPORT_DIR}/deck_report.json",
         "w",
         encoding="utf-8"
     ) as f:

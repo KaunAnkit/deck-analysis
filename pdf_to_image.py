@@ -18,5 +18,3 @@ def pdf_to_images(pdf_path, output_folder="slides"):
         pix.save(path)
 
 
-
-pdf_to_images("fusion_pitch.pdf") 
