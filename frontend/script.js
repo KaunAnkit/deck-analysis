@@ -1,5 +1,8 @@
 console.log("SCRIPT LOADED");
 
+const API_URL =
+    "https://deck-analysis.onrender.com";
+
 let startupProfile = null;
 
 const uploadBtn = document.getElementById("uploadBtn");
@@ -47,7 +50,7 @@ async function uploadPDF() {
         });
 
         const response = await fetch(
-            "http://localhost:9000/upload",
+            `${API_URL}/upload`,
             {
                 method: "POST",
                 body: formData
@@ -319,7 +322,7 @@ async function generateInvestorEmail() {
 
         const response =
             await fetch(
-                "http://localhost:9000/generate-email",
+                `${API_URL}/generate-email`,
                 {
                     method: "POST",
                     body: formData
