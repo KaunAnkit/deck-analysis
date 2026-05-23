@@ -1,7 +1,7 @@
 console.log("SCRIPT LOADED");
 
 const API_URL =
-    "https://deck-analysis.onrender.com";
+    "https://deck-analysis-njhu.onrender.com";
 
 let startupProfile = null;
 
