@@ -6,7 +6,7 @@ import json
 load_dotenv()
 
 client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
+    api_key=os.getenv("GROK_GROK")
 )
 
 
@@ -20,39 +20,40 @@ def encode_image(image_path):
             image_file.read()
         ).decode("utf-8")
 
-def analyze_slide(slide_text,image_path):
+def analyze_slide(slide_text,image_path,deck_content):
 
     base64_image = encode_image(image_path)
 
 
     prompt = f"""
-    Analyze this pitch deck slide.
+    You are an expert startup investor, sales strategist, and presentation consultant.
 
-    You are provided:
+    Be brutally honest - most slides score 3-6/10. Penalize vague claims, missing data, and 
+    investor-unfriendly design. Do NOT give benefit of the doubt for missing information.
 
-    1. OCR extracted text
-    2. The actual slide image
+    Analyze this slide in the context of the entire deck and the user's stated goals.
 
-    Use BOTH sources.
+    Deck Context:
+    - Goal: {deck_content["deck_goal"]}
+    - Deck Type: {deck_content["deck_type"]}
+    - Fund Size: {deck_content["fund_size"]}
+    - Growth Focus: {deck_content["growth_focus"]}
+    - Usage Timeline: {deck_content["deck_timeline"]}
 
-    Pay attention to:
-    - charts
-    - screenshots
-    - diagrams
-    - branding
-    - design quality
-    - visual hierarchy
-    - metrics shown visually
 
-    Return ONLY valid JSON.
+    IMPORTANT:
+    Return ONLY valid JSON 
 
+    JSON FORMAT:
     {{
         "slide_type": "",
         "summary": "",
         "strengths": [],
         "weaknesses": [],
+        "missing_information": [],
         "investor_concerns": [],
-        "Overall Score (0-100)": 0,
+        "goal_alignment": "",
+        "overall_score": 0
     }}
 
     OCR Text:

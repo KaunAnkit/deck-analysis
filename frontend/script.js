@@ -14,6 +14,21 @@ async function uploadPDF() {
         return;
     }
 
+    const deckGoal =
+        document.getElementById("deckGoal").value;
+
+    const deckType =
+        document.getElementById("deckType").value;
+
+    const fundSize =
+        document.getElementById("fundSize").value;
+
+    const growthFocus =
+        document.getElementById("growthFocus").value;
+
+    const deckTimeline =
+        document.getElementById("deckTimeline").value;
+
     const status =
         document.getElementById("status");
 
@@ -30,6 +45,41 @@ async function uploadPDF() {
             file
         );
 
+        formData.append(
+            "deck_goal",
+            deckGoal
+        );
+
+        formData.append(
+            "deck_type",
+            deckType
+        );
+
+        formData.append(
+            "fund_size",
+            fundSize
+        );
+
+        formData.append(
+            "growth_focus",
+            growthFocus
+        );
+
+        formData.append(
+            "deck_timeline",
+            deckTimeline
+        );
+
+        console.log("Sending:");
+
+        console.log({
+            deckGoal,
+            deckType,
+            fundSize,
+            growthFocus,
+            deckTimeline
+        });
+
         const response =
             await fetch(
                 "http://localhost:9000/upload",
@@ -40,27 +90,25 @@ async function uploadPDF() {
             );
 
         if (!response.ok) {
+
             throw new Error(
                 `Server error: ${response.status}`
             );
+
         }
 
         const data =
             await response.json();
 
-        console.log("FULL RESPONSE:");
-        console.log(data);
-
         let report =
             data.report;
 
-        // If backend sends JSON string
         if (typeof report === "string") {
-            report = JSON.parse(report);
-        }
 
-        console.log("REPORT:");
-        console.log(report);
+            report =
+                JSON.parse(report);
+
+        }
 
         status.textContent =
             "Analysis Complete";
@@ -72,8 +120,7 @@ async function uploadPDF() {
 
         console.error(error);
 
-        document.getElementById("status")
-            .textContent =
+        status.textContent =
             "Failed to analyze PDF";
 
         document.getElementById("output")

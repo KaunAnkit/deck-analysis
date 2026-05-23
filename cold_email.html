@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold Email Generator</title>
+
+    <link rel="stylesheet" href="frontend/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>LinkedIn Cold Email Generator</h1>
+
+    <label>
+        LinkedIn Profile URL
+    </label>
+
+    <input
+        type="text"
+        id="linkedinUrl"
+        placeholder="https://linkedin.com/in/..."
+    >
+
+    <button id="generateBtn">
+        Generate Email
+    </button>
+
+    <p id="status"></p>
+
+    <div id="output"></div>
+
+</div>
+
+<script src="frontend/coldmail.js"></script>
+
+</body>
+</html>

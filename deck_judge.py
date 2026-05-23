@@ -5,96 +5,118 @@ import json
 
 load_dotenv()
 
-client = Groq(
-    api_key=os.getenv("GROQ_API_JUDGE")
+clienty = Groq(
+    api_key=os.getenv("GROQ_BACKUP_BACKUP")
 )
 
-
-def judge_deck(analysis_a,analysis_c,analysis_d):
+def judge_deck(analysis_a,analysis_c,analysis_d,deck_content):
 
     prompt = f"""
-You are an experienced startup investor.
+    You are an expert startup investor, sales strategist, fundraising advisor, and presentation consultant.
 
-You are given slide-by-slide analysis of a startup pitch deck.
+    You are given analyses from multiple reviewers who evaluated the same deck.
 
-Evaluate the ENTIRE deck and return ONLY valid JSON.
+    Your task is to evaluate the ENTIRE deck in the context of the user's stated goals.
 
-Use scores from 0-100.
+    Deck Context:
 
-JSON FORMAT:
+    Goal: {deck_content["deck_goal"]}
+    Deck Type: {deck_content["deck_type"]}
+    Fund Size: {deck_content["fund_size"]}
+    Growth Focus: {deck_content["growth_focus"]}
+    Usage Timeline: {deck_content["deck_timeline"]}
 
-{{
-    "overall_score": 0,
+    Important Evaluation Rules:
 
-    "dimension_scores": {{
-        "clarity": 0,
-        "market_opportunity": 0,
-        "traction": 0,
-        "team": 0,
-        "pitch_quality": 0,
-        "competitive_positioning": 0
-    }},
+    Evaluate the deck relative to its stated purpose and audience.
+    Consider content quality, presentation quality, consistency, narrative flow, and strategic effectiveness.
+    Be critical but fair.
+    
+    Be brutally honest - most slides score 3-6/10. Penalize vague claims, missing data, and 
+    investor-unfriendly design. Do NOT give benefit of the doubt for missing information.
 
-    "improvement_suggestions": {{
-        "clarity": "",
-        "market_opportunity": "",
-        "traction": "",
-        "team": "",
-        "pitch_quality": "",
-        "competitive_positioning": ""
-    }},
+    Return ONLY valid JSON.
 
-    "reviewer_consensus": {{
-        "agreement_level": "",
-        "major_agreements": [],
-        "major_disagreements": []
-    }},
+    JSON FORMAT:
 
-    "top_strengths": [],
-    "top_weaknesses": [],
+    {{
+        "overall_score": 0,
 
-    "missing_sections": [],
-    "red_flags": [],
+        "dimension_scores": {{
+            "clarity": 0,
+            "market_opportunity": 0,
+            "traction": 0,
+            "team": 0,
+            "pitch_quality": 0,
+            "competitive_positioning": 0
+        }},
 
-    "investment_readiness": "",
-    "confidence_level": "",
+        "improvement_suggestions": {{
+            "clarity": "",
+            "market_opportunity": "",
+            "traction": "",
+            "team": "",
+            "pitch_quality": "",
+            "competitive_positioning": ""
+        }},
 
-    "overall_recommendation": ""
-}}
+        "reviewer_consensus": {{
+            "agreement_level": "",
+            "major_agreements": [],
+            "major_disagreements": []
+        }},
 
-Guidelines:
+        "top_strengths": [],
+        "top_weaknesses": [],
 
-- Score each category from 0 to 100.
-- Be critical but fair.
-- Focus on investor readiness.
-- Mention missing information if important sections are absent.
-- Add red flags only if they are significant concerns.
-- investment_readiness should be one of:
-  - Not Investment Ready
-  - Early Stage
-  - Seed Ready
-  - Series A Ready
+        "missing_sections": [],
+        "red_flags": [],
 
-- confidence_level should be:
-  - Low
-  - Medium
-  - High
+        "goal_alignment": "",
 
-Slide Analysis:
-Agent A Analysis:
+        "investment_readiness": "",
+        "confidence_level": "",
 
-{json.dumps(analysis_a, indent=2)}
+        "overall_recommendation": ""
+    }}
 
-Agent C Analysis:
+    Scoring Guidelines:
 
-{json.dumps(analysis_c, indent=2)}
+    0-20 = Very Poor
+    21-40 = Weak
+    41-60 = Average
+    61-80 = Strong
+    81-100 = Exceptional
 
-Agent D Analysis:
+    investment_readiness must be one of:
+    - Not Investment Ready
+    - Early Stage
+    - Seed Ready
+    - Series A Ready
 
-{json.dumps(analysis_d, indent=2)}
-"""
+    confidence_level must be one of:
+    - Low
+    - Medium
+    - High
 
-    response = client.chat.completions.create(
+    goal_alignment should explain how effectively the deck serves its intended purpose.
+
+    Slide Analysis:
+
+    Agent A Analysis:
+
+    {json.dumps(analysis_a, indent=2)}
+
+    Agent C Analysis:
+
+    {json.dumps(analysis_c, indent=2)}
+
+    Agent D Analysis:
+
+    {json.dumps(analysis_d, indent=2)}
+    """
+
+    response = clienty.chat.completions.create(
         model="openai/gpt-oss-120b",
         messages=[
             {

@@ -13,11 +13,133 @@
 
         <h1>Pitch Deck Analyzer</h1>
 
-        <input
-            type="file"
-            id="pdfInput"
-            accept=".pdf"
-        >
+        <div class="upload-section">
+
+            <label for="pdfInput">
+                Upload Pitch Deck (PDF)
+            </label>
+
+            <input
+                type="file"
+                id="pdfInput"
+                accept=".pdf"
+            >
+
+        </div>
+
+        <div class="form-section">
+
+            <h2>Deck Information</h2>
+
+            <label for="deckGoal">
+                Deck Goal
+            </label>
+
+            <select id="deckGoal">
+
+                <option value="investor_meeting">
+                    Investor Meeting
+                </option>
+
+                <option value="sales_meeting">
+                    Sales Meeting
+                </option>
+
+                <option value="demo_meeting">
+                    Demo Meeting
+                </option>
+
+                <option value="partnership_meeting">
+                    Partnership Meeting
+                </option>
+
+                <option value="introduction">
+                    Introduction Deck
+                </option>
+
+            </select>
+
+
+            <label for="deckType">
+                Deck Type
+            </label>
+
+            <select id="deckType">
+
+                <option value="pitch">
+                    Pitch Deck
+                </option>
+
+                <option value="sales">
+                    Sales Deck
+                </option>
+
+                <option value="company">
+                    Company Deck
+                </option>
+
+            </select>
+
+
+            <div id="pitchFields">
+
+                <h3>Pitch Deck Details</h3>
+
+                <label for="fundSize">
+                    Target Fund Raise
+                </label>
+
+                <input
+                    type="text"
+                    id="fundSize"
+                    placeholder="e.g. $500K, $2M, $10M"
+                >
+
+
+                <label for="growthFocus">
+                    Growth Focus
+                </label>
+
+                <select id="growthFocus">
+
+                    <option value="domestic">
+                        Domestic
+                    </option>
+
+                    <option value="international">
+                        International
+                    </option>
+
+                </select>
+
+
+                <label for="deckTimeline">
+                    When will this deck be used?
+                </label>
+
+                <select id="deckTimeline">
+
+                    <option value="within_1_week">
+                        Within 1 Week
+                    </option>
+
+                    <option value="within_1_month">
+                        Within 1 Month
+                    </option>
+
+                    <option value="within_3_months">
+                        Within 3 Months
+                    </option>
+
+                    <option value="more_than_3_months">
+                        More than 3 Months
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
 
         <button id="uploadBtn">
             Analyze Deck
@@ -27,6 +149,12 @@
 
         <div id="output"></div>
 
+    </div>
+
+    <div class="nav-links">
+        <a href="coldmail.html">
+            Generate Cold Email →
+        </a>
     </div>
 
     <script src="frontend/script.js"></script>

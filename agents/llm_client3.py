@@ -6,39 +6,54 @@ import json
 load_dotenv()
 
 client = Groq(
-    api_key=os.getenv("GROQ_AGENT_THREE")
+    api_key=os.getenv("GROQ_BACKUP")
 )
 
-def analyze_slide_d(slide_text, visual_details):
+def analyze_slide_d(slide_text, visual_details,deck_content):
 
     prompt = f"""
-    Analyze this pitch deck slide.
+    You are an expert startup investor, sales strategist, and presentation consultant.
 
-    You are provided:
+    Be brutally honest - most slides score 3-6/10. Penalize vague claims, missing data, and 
+    investor-unfriendly design. Do NOT give benefit of the doubt for missing information.
+
+    Analyze this slide using BOTH:
 
     1. OCR extracted text
     2. Visual analysis of the slide
 
-    Use BOTH sources.
+    Deck Context:
 
-    Visual Details:
+    - Goal: {deck_content["deck_goal"]}
+    - Deck Type: {deck_content["deck_type"]}
+    - Fund Size: {deck_content["fund_size"]}
+    - Growth Focus: {deck_content["growth_focus"]}
+    - Usage Timeline: {deck_content["deck_timeline"]}
+    
+    IMPORTANT:
+    Return ONLY valid JSON 
 
-    {json.dumps(visual_details, indent=2)}
-
-    Return ONLY valid JSON.
-
+    JSON FORMAT:
     {{
         "slide_type": "",
         "summary": "",
         "strengths": [],
         "weaknesses": [],
+        "missing_information": [],
         "investor_concerns": [],
-        "Overall Score (0-100)": 0, 
+        "goal_alignment": "",
+        "overall_score": 0
     }}
+
+    Visual Details:
+
+    {json.dumps(visual_details, indent=2)}
 
     OCR Text:
 
     {slide_text}
+
+    Return ONLY valid JSON.
     """
 
     response = client.chat.completions.create(
