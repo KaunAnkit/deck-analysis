@@ -8,3 +8,5 @@ requests==2.31.0
 
 easyocr==1.7.0
 pymupdf==1.26.0
+
+python-multipart==0.0.9
