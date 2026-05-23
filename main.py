@@ -4,6 +4,10 @@ from analysis_pipeline import run_pipeline
 
 from cold_mail.pipeline import generate_cold_email
 
+import json
+
+
+
 import os
 
 UPLOAD_DIR = "uploads"
@@ -49,20 +53,29 @@ async def upload_pitch_deck(
         "deck_timeline": deck_timeline
     }
 
-    report = run_pipeline(file_path, deck_context)
+    result = run_pipeline(file_path, deck_context)
 
     return {
         "success": True,
-        "report": report
+        "report": result["report"],
+        "startup_profile":result["startup_profile"]
     }
 
 
-@app.post("/cold-email")
-async def cold_email(
-    linkedin_url: str = Form(...)
+@app.post("/generate-email")
+async def generate_email_endpoint(
+    linkedin_url: str = Form(...),
+    startup_profile: str = Form(...)
 ):
 
-    email = generate_cold_email(linkedin_url)
+    startup_profile = json.loads(
+        startup_profile
+    )
+
+    email = generate_cold_email(
+        linkedin_url,
+        startup_profile
+    )
 
     return {
         "success": True,

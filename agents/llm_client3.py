@@ -6,7 +6,7 @@ import json
 load_dotenv()
 
 client = Groq(
-    api_key=os.getenv("GROQ_BACKUP")
+    api_key=os.getenv("GROQ_AGENT_THREE")
 )
 
 def analyze_slide_d(slide_text, visual_details,deck_content):

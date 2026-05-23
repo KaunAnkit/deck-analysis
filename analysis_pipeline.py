@@ -13,6 +13,8 @@ from agents.llm_client3 import analyze_slide_d
 
 from deck_judge import judge_deck
 
+from cold_mail.llm_mail import extract_startup_details
+
 REPORT_DIR = "reports"
 os.makedirs(REPORT_DIR, exist_ok=True)
 
@@ -50,6 +52,8 @@ def run_pipeline(pdf_path, deck_context):
     analysis_c = []
     analysis_d = []
 
+    visual_analysis = []
+
     for slide in slides:
 
         image_path = f"slides/{slide['slide']}"
@@ -58,6 +62,12 @@ def run_pipeline(pdf_path, deck_context):
             image_path,
             slide["text"]
         )
+
+        visual_analysis.append({
+            "slide": slide["slide"],
+            "image_path": image_path,
+            "visual_analysis": visual_details
+        })
 
         with ThreadPoolExecutor(max_workers=3) as executor:
 
@@ -103,6 +113,9 @@ def run_pipeline(pdf_path, deck_context):
 
     print("\nAnalyzed all slides")
 
+    with open(f"{REPORT_DIR}/visual_analysis.json", "w", encoding="utf-8") as f:
+        json.dump(visual_analysis, f, ensure_ascii=False)
+
     with open(f"{REPORT_DIR}/analysis_a.json", "w", encoding="utf-8") as f:
         json.dump(analysis_a, f, ensure_ascii=False)
 
@@ -123,12 +136,26 @@ def run_pipeline(pdf_path, deck_context):
         deck_context
     )
 
+    with open(f"{REPORT_DIR}/visual_analysis.json", "r", encoding="utf-8") as f:
+        visual_analysis_json = f.read()
+
+    startup_profile = extract_startup_details(
+        visual_analysis_json,
+    )
+
     with open(f"{REPORT_DIR}/deck_report.json", "w", encoding="utf-8") as f:
         json.dump(deck_report, f, indent=4, ensure_ascii=False)
 
-    print("\nSaved deck_report.json")
+    with open(f"{REPORT_DIR}/startup_profile.json","w",encoding="utf-8") as f:
+        json.dump(startup_profile,f,indent=4,ensure_ascii=False)
 
-    return deck_report
+    print("\nSaved deck_report.json")
+    print("\nSaved startup_profile.json")
+
+    return {
+    "report": deck_report,
+    "startup_profile": startup_profile
+    }
 
 
 if __name__ == "__main__":
