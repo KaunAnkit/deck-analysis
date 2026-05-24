@@ -4,20 +4,32 @@ import os
 import json
 import base64
 
+from PIL import Image
+import io
+
 load_dotenv()
 
 client = Groq(
     api_key=os.getenv("GROQ_BACKUP")
 )
 
-
 def encode_image(image_path):
 
-    with open(image_path, "rb") as image_file:
+    img = Image.open(image_path)
 
-        return base64.b64encode(
-            image_file.read()
-        ).decode("utf-8")
+    img.thumbnail((1200, 1200))
+
+    buffer = io.BytesIO()
+
+    img.save(
+        buffer,
+        format="JPEG",
+        quality=70
+    )
+
+    return base64.b64encode(
+        buffer.getvalue()
+    ).decode("utf-8")
 
 
 def describe_slide(image_path, ocr_text=""):

@@ -5,9 +5,6 @@ from analysis_pipeline import run_pipeline
 from cold_mail.pipeline import generate_cold_email
 
 import json
-
-
-
 import os
 
 UPLOAD_DIR = "uploads"
@@ -54,6 +51,9 @@ async def upload_pitch_deck(
     }
 
     result = run_pipeline(file_path, deck_context)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
     return {
         "success": True,

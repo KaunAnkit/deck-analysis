@@ -1,9 +1,9 @@
 import easyocr
 import os
 
-def ocr_slides():
+reader = easyocr.Reader(['en'], gpu = False)
 
-    reader = easyocr.Reader(['en'])
+def ocr_slides():
 
     folder = "slides"
 
