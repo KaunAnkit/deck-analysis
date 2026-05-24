@@ -25,7 +25,7 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message": "running"}
+    return {"message": "running yeah"}
 
 @app.post("/upload")
 async def upload_pitch_deck(
